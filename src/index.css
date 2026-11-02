@@ -4,21 +4,17 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,sans-seri
 .container{display:flex;height:100vh}
 .sidebar{width:260px;background:var(--card);border-right:1px solid var(--border);padding:12px;display:flex;flex-direction:column;gap:10px}
 .new-btn{background:var(--purple);border:none;padding:12px;border-radius:10px;font-weight:600;display:flex;justify-content:space-between;cursor:pointer}
-.prev-btn{background:var(--purple);border:none;padding:10px;border-radius:10px;cursor:pointer}
-.prev-btn.active{filter:brightness(0.95)}
+.prev-btn{background:var(--purple);border:none;padding:10px;border-radius:10px;cursor:pointer;width:100%}
 .main{flex:1;display:flex;flex-direction:column;background:var(--bg)}
 header{display:flex;justify-content:space-between;align-items:center;padding:12px 20px}
 header h1{font-size:16px;color:#8b5cf6;margin:0}
-.tbtn{background:none;border:none;cursor:pointer}
 .center{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;text-align:center}
-.bot{width:50px;height:50px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.1);margin:12px 0 24px;font-size:24px}
+.bot{width:50px;height:50px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:12px 0 24px}
 .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:650px;width:100%}
-.card{background:#fff;padding:14px;border-radius:8px;cursor:pointer;border:1px solid #f0f0f0;text-align:left}
-.card b{font-size:13px;display:block}
-.card small{font-size:11px;color:#888}
+.card{background:#fff;padding:14px;border-radius:8px;cursor:pointer;border:1px solid #f0f0f0}
 .chat{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
-.msg{background:#fff;border-radius:10px;padding:12px 14px;display:flex;gap:10px;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
-.av{width:36px;height:36px;border-radius:50%}
-.input-area{display:flex;gap:8px;padding:14px;border-top:1px solid var(--border);background:var(--card)}
+.msg{background:#fff;border-radius:10px;padding:12px 14px;display:flex;gap:10px}
+.input-area{display:flex;gap:8px;padding:14px;border-top:1px solid var(--border);background:var(--card);position:relative;z-index:9999}
 .input-area input{flex:1;padding:11px;border-radius:6px;border:1px solid var(--border)}
-.input-area button{padding:0 16px;border-radius:6px;border:1px solid var(--border);background:var(--purple);cursor:pointer}
+.input-area button{padding:0 16px;border-radius:6px;border:1px solid var(--border);background:var(--purple);cursor:pointer;position:relative;z-index:10000}
+#nl-badge-frame{display:none !important;pointer-events:none !important}
