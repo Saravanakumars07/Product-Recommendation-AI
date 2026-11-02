@@ -1,0 +1,37 @@
+{
+  "products": {
+    "jeans": {
+      "prompt": "Great! What's your budget for Jeans? Please provide a range like 500 - 1000",
+      "budgets": [
+        {"min": 0, "max": 1000, "recommendation": "We recommend: Slim Fit Jeans - $599, perfect for daily wear!"},
+        {"min": 1000, "max": 2000, "recommendation": "We recommend: Premium Denim Jeans - $1499, high quality stretch denim."},
+        {"min": 2000, "max": 10000, "recommendation": "We recommend: Designer Jeans Collection - $2999, luxury brand."}
+      ]
+    },
+    "smartphone": {
+      "prompt": "Awesome! What's your budget for Smartphone? Please provide a range like 10000 - 20000",
+      "budgets": [
+        {"min": 0, "max": 15000, "recommendation": "We recommend: Redmi Note 12 - $12999, great battery and camera!"},
+        {"min": 15000, "max": 30000, "recommendation": "We recommend: OnePlus Nord - $24999, flagship performance."},
+        {"min": 30000, "max": 100000, "recommendation": "We recommend: iPhone 14 - $69999, best in class."}
+      ]
+    },
+    "laptop": {
+      "prompt": "Nice choice! What's your budget for Laptop? Please provide a range like 30000 - 60000",
+      "budgets": [
+        {"min": 0, "max": 40000, "recommendation": "We recommend: Lenovo IdeaPad - $34999, ideal for students."},
+        {"min": 40000, "max": 70000, "recommendation": "We recommend: HP Pavilion - $59999, performance for work."},
+        {"min": 70000, "max": 200000, "recommendation": "We recommend: MacBook Air M2 - $99999, super fast and light."}
+      ]
+    },
+    "t-shirt": {
+      "prompt": "Cool! What's your budget for T-Shirt? Please provide a range like 200 - 800",
+      "budgets": [
+        {"min": 0, "max": 500, "recommendation": "We recommend: Cotton Crew T-Shirt - $299, comfortable daily wear."},
+        {"min": 500, "max": 1000, "recommendation": "We recommend: Polo T-Shirt - $799, premium cotton."},
+        {"min": 1000, "max": 5000, "recommendation": "We recommend: Branded T-Shirt Pack - $1499, pack of 3."}
+      ]
+    }
+  },
+  "fallback": "Sorry, I did not understand your query!"
+}

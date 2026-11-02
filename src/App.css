@@ -1,0 +1,22 @@
+:root{ --bg:#fff; --text:#111; --card:#f5f5f5; --border:#ddd; }
+[data-theme="dark"]{ --bg:#121212; --text:#eee; --card:#1e1e1e; --border:#333; }
+body{ margin:0; background:var(--bg); color:var(--text); font-family:Inter,sans-serif; }
+header{ display:flex; justify-content:space-between; align-items:center; padding:1rem 1.5rem; border-bottom:1px solid var(--border); }
+.suggestions{ display:flex; gap:0.6rem; flex-wrap:wrap; padding:1rem 1.5rem; }
+.suggestions button{ padding:0.6rem 1.2rem; border:1px solid var(--border); background:var(--card); border-radius:20px; cursor:pointer; }
+.chat{ padding:1rem 1.5rem; min-height:55vh; }
+.msg{ margin:0.8rem 0; padding:0.9rem 1rem; border-radius:14px; max-width:75%; position:relative; line-height:1.4; }
+.msg.user{ background:#6c5ce7; color:white; margin-left:auto; }
+.msg.ai{ background:var(--card); border:1px solid var(--border); }
+.feedback-btns{ position:absolute; right:8px; top:-14px; display:flex; gap:4px; opacity:0; transition:0.2s ease; background:var(--bg); border:1px solid var(--border); border-radius:20px; padding:3px 8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+.msg.ai:hover .feedback-btns{ opacity:1; }
+.feedback-btns button{ border:none; background:none; cursor:pointer; font-size:14px; }
+.input-area{ display:flex; gap:0.5rem; padding:1rem 1.5rem; position:sticky; bottom:0; background:var(--bg); border-top:1px solid var(--border); }
+.input-area input{ flex:1; padding:0.9rem; border-radius:10px; border:1px solid var(--border); background:var(--card); color:var(--text); }
+.input-area button{ padding:0.9rem 1.2rem; border-radius:10px; border:none; cursor:pointer; background:#6c5ce7; color:white; }
+.modal{ position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:10; }
+.modal-content{ background:var(--bg); padding:1.5rem; border-radius:12px; width:90%; max-width:420px; border:1px solid var(--border); }
+.stars{ display:flex; gap:6px; font-size:26px; cursor:pointer; }
+.star.active{ color:gold; }
+.end-feedback{ border-top:1px solid var(--border); padding:1rem 1.5rem; margin-top:1rem; }
+@media(max-width:600px){ .msg{ max-width:90%; } header{ flex-direction:column; gap:0.5rem; } }
