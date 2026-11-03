@@ -33,6 +33,8 @@ function ChatPage(){
         <h1>Product Recommendation AI</h1>
         <div style={{flex:1,overflow:"auto",padding:"10px"}}>{messages.map((m,i)=><div key={i}><div>You: {m.q}</div><div>AI: {m.a}</div></div>)}</div>
         <form onSubmit={ask} style={{display:"flex",gap:"8px",padding:"14px",paddingRight:"260px",position:"relative",zIndex:9999}}>
+          
+          
           <input placeholder="Please tell me about your query!" value={input} onChange={e=>setInput(e.target.value)} style={{flex:1,padding:"10px"}} />
           <button type="submit" style={{padding:"10px 20px",zIndex:99999}}>Ask</button>
           <button type="submit" style={{padding:"10px 20px",zIndex:99999}}>Save</button>
