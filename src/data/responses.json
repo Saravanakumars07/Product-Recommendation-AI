@@ -1,7 +1,7 @@
 {
-  "jeans": { "prompt": "Please select your budget (500 - 1000, 1000 - 1500, 1500 - 2000)", "response": "Wrogn - Rs 800" },
-  "smartphone": { "prompt": "Please select your budget (10000 - 20000, 20000 - 30000)", "response": "Redmi Note 12" },
-  "laptop": { "prompt": "Please select your budget (30000 - 60000, 60000 - 90000)", "response": "Lenovo IdeaPad" },
-  "t-shirt": { "prompt": "Please select your budget (200 - 500, 500 - 1000)", "response": "Cotton T-Shirt" },
-  "fallback": "Sorry, I did not understand your query!"
+  "jeans": { "prompt": "Please select your budget (500 - 1000, 1000 - 1500, 1500 - 2000)", "answer": "Here is a suggestion: Wrogn - Rs 800" },
+  "smartphone": { "prompt": "Please select your budget (10000 - 20000, 20000 - 30000)", "answer": "Redmi Note 12 - Rs 15000" },
+  "laptop": { "prompt": "Please select your budget (30000 - 60000, 60000 - 90000)", "answer": "Lenovo IdeaPad - Rs 55000" },
+  "tshirt": { "prompt": "Please select your budget (200 - 500, 500 - 1000)", "answer": "Cotton T-Shirt - Rs 400" },
+  "t-shirt": { "prompt": "Please select your budget (200 - 500, 500 - 1000)", "answer": "Cotton T-Shirt - Rs 400" }
 }
