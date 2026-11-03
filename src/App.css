@@ -1,22 +1,25 @@
-:root{ --bg:#fff; --text:#111; --card:#f5f5f5; --border:#ddd; }
-[data-theme="dark"]{ --bg:#121212; --text:#eee; --card:#1e1e1e; --border:#333; }
-body{ margin:0; background:var(--bg); color:var(--text); font-family:Inter,sans-serif; }
-header{ display:flex; justify-content:space-between; align-items:center; padding:1rem 1.5rem; border-bottom:1px solid var(--border); }
-.suggestions{ display:flex; gap:0.6rem; flex-wrap:wrap; padding:1rem 1.5rem; }
-.suggestions button{ padding:0.6rem 1.2rem; border:1px solid var(--border); background:var(--card); border-radius:20px; cursor:pointer; }
-.chat{ padding:1rem 1.5rem; min-height:55vh; }
-.msg{ margin:0.8rem 0; padding:0.9rem 1rem; border-radius:14px; max-width:75%; position:relative; line-height:1.4; }
-.msg.user{ background:#6c5ce7; color:white; margin-left:auto; }
-.msg.ai{ background:var(--card); border:1px solid var(--border); }
-.feedback-btns{ position:absolute; right:8px; top:-14px; display:flex; gap:4px; opacity:0; transition:0.2s ease; background:var(--bg); border:1px solid var(--border); border-radius:20px; padding:3px 8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
-.msg.ai:hover .feedback-btns{ opacity:1; }
-.feedback-btns button{ border:none; background:none; cursor:pointer; font-size:14px; }
-.input-area{ display:flex; gap:0.5rem; padding:1rem 1.5rem; position:sticky; bottom:0; background:var(--bg); border-top:1px solid var(--border); }
-.input-area input{ flex:1; padding:0.9rem; border-radius:10px; border:1px solid var(--border); background:var(--card); color:var(--text); }
-.input-area button{ padding:0.9rem 1.2rem; border-radius:10px; border:none; cursor:pointer; background:#6c5ce7; color:white; }
-.modal{ position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:10; }
-.modal-content{ background:var(--bg); padding:1.5rem; border-radius:12px; width:90%; max-width:420px; border:1px solid var(--border); }
-.stars{ display:flex; gap:6px; font-size:26px; cursor:pointer; }
-.star.active{ color:gold; }
-.end-feedback{ border-top:1px solid var(--border); padding:1rem 1.5rem; margin-top:1rem; }
-@media(max-width:600px){ .msg{ max-width:90%; } header{ flex-direction:column; gap:0.5rem; } }
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,sans-serif}
+body[data-theme=dark]{background:#121212;color:#fff}
+body[data-theme=dark] .sidebar{background:#1f1f1f}
+body[data-theme=dark] .msg-ai{background:#2d2d2d!important;color:#fff!important}
+.app{display:flex;height:100vh;width:100vw}
+.sidebar{width:240px;padding:12px;border-right:1px solid #ddd;background:#f9f9ff;display:flex;flex-direction:column;gap:10px}
+.new-suggestion{background:#ddd6fe;padding:12px;border-radius:10px;cursor:pointer}
+.btn-history{width:100%;padding:10px;background:#ddd6fe;border:none;border-radius:8px;cursor:pointer}
+.chat-area{flex:1;display:flex;flex-direction:column}
+.header{display:flex;justify-content:space-between;padding:12px 20px;border-bottom:1px solid #ddd}
+.msg-list{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.msg{position:relative;display:flex;gap:10px;padding:12px;border-radius:12px;max-width:85%}
+.msg-ai{background:#e9d5ff;align-self:flex-start}
+.msg-user{background:#fff;border:1px solid #eee;align-self:flex-end;flex-direction:row-reverse}
+.avatar{width:32px;height:32px;border-radius:50%}
+.hover-actions{position:absolute;right:8px;top:-10px;background:#fff;border:1px solid #ddd;border-radius:20px;padding:4px 8px;display:none;gap:6px}
+.msg-ai:hover .hover-actions{display:flex}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px auto;max-width:500px}
+.card{border:1px solid #ddd;padding:12px;border-radius:10px;cursor:pointer;background:#fff;text-align:left}
+.input-bar{display:flex;gap:8px;padding:14px;border-top:1px solid #eee}
+.input-bar input{flex:1;padding:12px;border:1px solid #ddd;border-radius:8px}
+.input-bar button{padding:10px 20px;background:#7c3aed;color:#fff;border:none;border-radius:8px;cursor:pointer}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9999}
+.modal{background:#fff;padding:20px;border-radius:12px;width:90%;max-width:420px;color:#000}
+@media(max-width:768px){.app{flex-direction:column}.sidebar{width:100%;flex-direction:row}.cards{grid-template-columns:1fr}}
