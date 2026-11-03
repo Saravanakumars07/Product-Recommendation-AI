@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "product-recommendation-ai",
   "private": true,
   "version": "1.0.0",
@@ -15,6 +15,6 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.0.8"
+    "vite": "4.4.5"
   }
 }
