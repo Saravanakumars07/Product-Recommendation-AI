@@ -1,104 +1,185 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import data from "./data/responses.json";
+import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom'
+import './App.css'
 
-function Chat() {
-  const [msgs, setMsgs] = useState([]);
-  const [input, setInput] = useState("");
-  const [stage, setStage] = useState("product");
-  const [prod, setProd] = useState(null);
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-  const [rating, setRating] = useState(0);
-  const [feedback, setFeedback] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState("");
+// ===== PREDEFINED JSON - Step 1 / Step 4 =====
+const DATA = {
+  "jeans": [
+    { min: 0, max: 1000, text: "For Jeans in budget 0 - 1000, we recommend Levi's 511 Slim Fit Jeans - comfortable and durable." },
+    { min: 1000, max: 3000, text: "For Jeans in budget 1000 - 3000, we recommend Wrangler Regular Fit Jeans - great quality." }
+  ],
+  "smartphone": [
+    { min: 0, max: 15000, text: "For Smartphone in budget 0 - 15000, we recommend Redmi Note 13 - great value." },
+    { min: 15000, max: 50000, text: "For Smartphone in budget 15000 - 50000, we recommend Samsung Galaxy A55 - excellent camera." }
+  ],
+  "laptop": [
+    { min: 0, max: 40000, text: "For Laptop in budget 0 - 40000, we recommend HP 15s - best for students." },
+    { min: 40000, max: 100000, text: "For Laptop in budget 40000 - 100000, we recommend MacBook Air M2 - powerful and light." }
+  ],
+  "t-shirt": [
+    { min: 0, max: 1000, text: "For T-Shirt in budget 0 - 1000, we recommend Roadster Cotton T-Shirt - soft and comfortable." },
+    { min: 1000, max: 3000, text: "For T-Shirt in budget 1000 - 3000, we recommend Nike Dri-FIT T-Shirt - premium sporty fit." }
+  ]
+}
+const PRODUCTS = ["Jeans", "Smartphone", "Laptop", "T-Shirt"]
+const FALLBACK = "Sorry, I did not understand your query!"
 
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-    const id = setInterval(() => { const f = document.getElementById("nl-badge-frame"); if (f) f.remove(); }, 500);
-    return () => clearInterval(id);
-  }, [theme]);
+function ChatPage({ theme, setTheme }) {
+  const [messages, setMessages] = useState([{ from: 'bot', text: 'Hi! Ask me for Jeans, Smartphone, Laptop or T-Shirt. Then tell me your budget like 500 - 1000.' }])
+  const [input, setInput] = useState('')
+  const [stage, setStage] = useState('product') // product | budget | done
+  const [product, setProduct] = useState('')
+  const [msgFeedback, setMsgFeedback] = useState({}) // index -> {type, stars, feedback}
+  const [showModal, setShowModal] = useState(null) // msg index for thumbs-down
+  const [modalText, setModalText] = useState('')
+  const [starFor, setStarFor] = useState(null)
+  const [endRating, setEndRating] = useState(0)
+  const [endFeedback, setEndFeedback] = useState('')
+  const navigate = useNavigate()
 
-  const saveCurrent = () => {
-    if (msgs.length === 0) return;
-    const all = JSON.parse(localStorage.getItem("conversations") || "[]");
-    all.push({
-      id: Date.now(),
-      messages: msgs.map(m => ({ from: m.from, text: m.text, name: m.from === "user" ? "You" : "Product Recommendation AI", time: m.time })),
-      rating: rating || 4,
-      feedback,
-      date: new Date().toISOString()
-    });
-    localStorage.setItem("conversations", JSON.stringify(all));
-  };
+  const findProduct = (q) => {
+    const lower = q.toLowerCase()
+    if (lower.includes('jean')) return 'jeans'
+    if (lower.includes('phone') || lower.includes('smartphone')) return 'smartphone'
+    if (lower.includes('laptop')) return 'laptop'
+    if (lower.includes('t-shirt') || lower.includes('tshirt') || lower.includes('shirt')) return 't-shirt'
+    return null
+  }
 
   const handleAsk = (e) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-    const lower = input.toLowerCase();
-    let reply = "Sorry, I did not understand your query!";
-    
-    if (stage === "product") {
-      const found = Object.keys(data).find(k => lower.includes(k));
-      if (found) { setProd(found); reply = data[found].prompt; setStage("budget"); }
+    e.preventDefault()
+    const q = input.trim()
+    if (!q) return
+    const newMsgs = [...messages, { from: 'user', text: q }]
+    let botText = FALLBACK
+    if (stage === 'product') {
+      const p = findProduct(q)
+      if (p) { setProduct(p); setStage('budget'); botText = `Great! You want ${p}. Please tell me your budget range like 500 - 1000.` }
+    } else if (stage === 'budget') {
+      const nums = q.match(/\d+/g)
+      if (nums && nums.length >= 2) {
+        const min = parseInt(nums[0]), max = parseInt(nums[1])
+        const found = DATA[product]?.find(r => min >= r.min && max <= r.max || min >= r.min && min <= r.max)
+        if (found) { botText = found.text; setStage('done') }
+        else botText = `No exact match for ${product} in ${min} - ${max}. Try 500 - 1000 or 1000 - 3000.`
+      } else botText = `Please give a valid range like 500 - 1000.`
     } else {
-      if (prod) { reply = data[prod].answer; setStage("completed"); }
-      else {
-        const found = Object.keys(data).find(k => lower.includes(k));
-        if (found) { setProd(found); reply = data[found].prompt; setStage("budget"); }
-      }
+      const p = findProduct(q)
+      if (p) { setProduct(p); setStage('budget'); botText = `Great! You want ${p}. Please tell me your budget range like 500 - 1000.` }
     }
-    setMsgs([...msgs, { from: "user", text: input, time: new Date().toLocaleTimeString() }, { from: "ai", text: reply, time: new Date().toLocaleTimeString() }]);
-    setInput("");
-  };
+    setMessages([...newMsgs, { from: 'bot', text: botText }])
+    setInput('')
+  }
 
-  const newSuggestion = () => {
-    if (msgs.length > 0) saveCurrent();
-    setMsgs([]); setStage("product"); setProd(null); setRating(0); setFeedback("");
-  };
+  const saveConversation = () => {
+    const saved = JSON.parse(localStorage.getItem('conversations') || '[]')
+    saved.push({ id: Date.now(), messages, rating: endRating, feedback: endFeedback, msgFeedback, date: new Date().toLocaleString() })
+    localStorage.setItem('conversations', JSON.stringify(saved))
+  }
+
+  const handleSave = (e) => { e.preventDefault(); saveConversation(); alert('Conversation saved! Check Past Conversations.') }
+
+  const handleNew = () => {
+    saveConversation()
+    setMessages([{ from: 'bot', text: 'Hi! Ask me for Jeans, Smartphone, Laptop or T-Shirt.' }])
+    setStage('product'); setProduct(''); setEndRating(0); setEndFeedback(''); setMsgFeedback({})
+  }
+
+  const submitModal = () => {
+    setMsgFeedback({ ...msgFeedback, [showModal]: { ...msgFeedback[showModal], type: 'down', feedback: modalText } })
+    localStorage.setItem('feedback_' + showModal, modalText)
+    setShowModal(null); setModalText('')
+  }
 
   return (
-    <div className="app">
-      <div className="sidebar">
-        <div className="new-box" onClick={newSuggestion}>💬 Want new suggestion? ↗️</div>
-        <Link to="/history" href="/history"><button type="button" className="btn-prev">Previous Suggestions</button></Link>
-      </div>
-      <div className="chat" style={{ background: theme === "dark" ? "#121212" : "#fff" }}>
-        <div className="header"><h1>Product Recommendation AI</h1><button type="button" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>{theme === "light" ? "Dark" : "Light"} Mode</button></div>
-        <div className="msg-list">
-          {msgs.map((m, i) => (
-            <div key={i} className={`msg ${m.from === "user" ? "user" : "ai"}`}>
-              <img className="avatar" src={m.from === "user" ? "https://i.pravatar.cc/40?img=5" : "https://cdn-icons-png.flaticon.com/512/4712/4712109.png"} alt="av" />
-              <div><b>{m.from === "user" ? "You" : "Product Recommendation AI"}</b><div>{m.text}</div><small>{m.time}</small></div>
-              {m.from === "ai" && <div className="hover-box"><button type="button" onClick={() => { setModalType("star"); setShowModal(true); }}>👍</button><button type="button" onClick={() => { setModalType("feedback"); setShowModal(true); }}>👎</button></div>}
-            </div>
-          ))}
-          {msgs.length === 0 && <div style={{ textAlign: "center", marginTop: 30 }}><h2>Hi, Please tell me what you want?</h2><div style={{ fontSize: 48 }}>🤖</div><div className="cards">{["Jeans", "Smartphone", "Laptop", "T-Shirt"].map(c => <div key={c} className="card" onClick={() => setInput(c)}><b>{c}</b><br /><small>Get immediate AI generated response</small></div>)}</div></div>}
-          {stage === "completed" && <div style={{ border: "1px solid #ddd", padding: 12, borderRadius: 10, background: "#fff", color: "#000" }}><b>Rate this conversation</b><div>{[1, 2, 3, 4, 5].map(n => <span key={n} className="stars" onClick={() => setRating(n)}>{n <= rating ? "★" : "☆"}</span>)}</div><textarea placeholder="Provide Additional Feedback" value={feedback} onChange={e => setFeedback(e.target.value)} style={{ width: "100%", marginTop: 8, padding: 8, borderRadius: 6 }} /></div>}
+    <div className={`app ${theme}`}>
+      <header>
+        <h1>Product Recommendation AI</h1>
+        <div>
+          <button type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? '☀️ Light' : '🌙 Dark'}</button>
+          <Link to="/history"><button type="button">Previous Recommendations</button></Link>
         </div>
-        <form onSubmit={handleAsk} className="input-bar">
-          <input value={input} onChange={e => setInput(e.target.value)} placeholder="Please tell me about your query!" />
-          <button type="submit">Ask</button>
-          <button type="submit" onClick={(e) => { e.preventDefault(); saveCurrent(); alert("Saved!"); }}>Save</button>
-        </form>
+      </header>
+
+      <div className="quick">
+        {PRODUCTS.map(p => <button key={p} type="button" onClick={() => { setInput(p); }}>{p}</button>)}
       </div>
-      {showModal && <div className="modal-bg"><div className="modal">{modalType === "star" ? <><h3>Rate this response</h3><div>{[1, 2, 3, 4, 5].map(n => <span key={n} className="stars" onClick={() => { setRating(n); setShowModal(false); }}>{n <= rating ? "★" : "☆"}</span>)}</div><button type="button" onClick={() => setShowModal(false)} style={{ marginTop: 10 }}>Close</button></> : <><h3>Provide Additional Feedback</h3><textarea value={feedback} onChange={e => setFeedback(e.target.value)} style={{ width: "100%", height: 100 }} placeholder="Write feedback..." /><div style={{ display: "flex", gap: 10, justifyContent: "flex-end", marginTop: 10 }}><button type="button" onClick={() => setShowModal(false)}>Cancel</button><button type="button" onClick={() => { localStorage.setItem("feedback_" + Date.now(), feedback); setShowModal(false); }}>Submit</button></div></>}</div></div>}
+
+      <div className="chat">
+        {messages.map((m, i) => (
+          <div key={i} className={`msg ${m.from}`}>
+            <p>{m.text}</p>
+            {m.from === 'bot' && (
+              <div className="thumbs">
+                <button type="button" onClick={() => setStarFor(i)}>👍</button>
+                <button type="button" onClick={() => setShowModal(i)}>👎</button>
+                {starFor === i && <span>{[1,2,3,4,5].map(s => <button key={s} type="button" onClick={() => { setMsgFeedback({ ...msgFeedback, [i]: { type: 'up', stars: s } }); setStarFor(null) }}>{s <= (msgFeedback[i]?.stars || 0) ? '★' : '☆'}</button>)}</span>}
+                {msgFeedback[i]?.stars && <small> Rated {msgFeedback[i].stars}/5</small>}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* End of conversation feedback - Step 6 */}
+      <div className="end-feedback">
+        <p>Rate this conversation:</p>
+        <div>{[1,2,3,4,5].map(s => <button key={s} type="button" onClick={() => setEndRating(s)}>{s <= endRating ? '★' : '☆'}</button>)}</div>
+        <textarea placeholder="Give subjective feedback..." value={endFeedback} onChange={(e) => setEndFeedback(e.target.value)} />
+      </div>
+
+      <form onSubmit={handleAsk} className="input-row">
+        <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Please tell me about your query!" />
+        <button type="submit">Ask</button>
+        <button type="submit" onClick={handleSave}>Save</button>
+      </form>
+      <button type="button" className="new-btn" onClick={handleNew}>Want new suggestion?</button>
+
+      {showModal !== null && (
+        <div className="modal">
+          <div className="modal-box">
+            <h3>Provide Additional Feedback</h3>
+            <textarea value={modalText} onChange={(e) => setModalText(e.target.value)} placeholder="Tell us what went wrong..." />
+            <button type="button" onClick={submitModal}>Submit</button>
+            <button type="button" onClick={() => setShowModal(null)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
-  );
+  )
 }
 
-function History() {
-  const [convs, setConvs] = useState([]);
-  const [filter, setFilter] = useState("All Ratings");
-  useEffect(() => setConvs(JSON.parse(localStorage.getItem("conversations") || "[]")), []);
-  const filtered = filter === "All Ratings" ? convs : convs.filter(c => String(c.rating) === filter);
+function HistoryPage({ theme, setTheme }) {
+  const [saved, setSaved] = useState([])
+  const [filter, setFilter] = useState('All Ratings')
+  useEffect(() => { setSaved(JSON.parse(localStorage.getItem('conversations') || '[]')) }, [])
+  const filtered = filter === 'All Ratings' ? saved : saved.filter(c => String(c.rating) === String(filter))
   return (
-    <div className="app">
-      <div className="sidebar"><Link to="/" href="/"><div className="new-box">💬 Want new suggestion? ↗️</div></Link><Link to="/history" href="/history"><button type="button" className="btn-prev">Previous Suggestions</button></Link></div>
-      <div style={{ flex: 1, padding: 20, overflow: "auto" }}><h1>Product Recommendation AI</h1><h2 style={{ textAlign: "center", margin: "10px 0" }}>Previous Suggestions</h2><label>Filter by rating</label><br /><select value={filter} onChange={e => setFilter(e.target.value)} style={{ padding: 6, marginTop: 6 }}><option>All Ratings</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select><h4 style={{ marginTop: 20 }}>Today's chats</h4>{filtered.length === 0 && <p>No conversations saved</p>}{filtered.map((c, i) => <div key={i} style={{ marginBottom: 14 }}>{c.messages?.map((m, j) => <div key={j} style={{ background: "#e9d5ff", padding: 10, borderRadius: 8, marginBottom: 6, color: "#000" }}><b>{m.name}</b> {m.text} <small>({c.rating}★)</small>{c.feedback && <div><i>Feedback: {c.feedback}</i></div>}</div>)}</div>)}</div>
+    <div className={`app ${theme}`}>
+      <header><h1>Product Recommendation AI</h1><Link to="/"><button type="button">Back to Chat</button></Link></header>
+      <h2>Past Conversations</h2>
+      <label>Filter by rating</label>
+      <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+        <option>All Ratings</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+      </select>
+      {filtered.length === 0 ? <p>No conversations yet.</p> : filtered.map(c => (
+        <div key={c.id} className="saved-card">
+          <p><b>Rating:</b> {c.rating} / 5</p><p><b>Feedback:</b> {c.feedback}</p>
+          {c.messages.map((m, i) => <p key={i}>{m.from}: {m.text}</p>)}
+        </div>
+      ))}
     </div>
-  );
+  )
 }
 
-export default function App() { return <BrowserRouter><Routes><Route path="/" element={<Chat />} /><Route path="/history" element={<History />} /></Routes></BrowserRouter>; }
+export default function App() {
+  const [theme, setTheme] = useState('light')
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<ChatPage theme={theme} setTheme={setTheme} />} />
+        <Route path="/history" element={<HistoryPage theme={theme} setTheme={setTheme} />} />
+      </Routes>
+    </BrowserRouter>
+  )
+}
